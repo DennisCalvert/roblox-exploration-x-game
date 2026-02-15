@@ -60,7 +60,7 @@ The world model representation for each item must be **configurable** (e.g. a re
 #### Constraints:
 
 - An item belongs to exactly one biome.
-- Items are placed physically in the world.
+- Items are placed physically in the world (by the system at config-driven random positions within the biome's spawn area).
 - Items are interactable through proximity.
 
 ---
@@ -107,26 +107,27 @@ For each player, persist:
 
 ## 5. World Placement Requirements
 
-Each biome contains defined spawn locations for items.
+Items are **placed at random** within each biome. The system instantiates collectibles from configuration; it does not rely on designer hand-placement of each instance.
 
-Items must spawn into their corresponding biome only.
+- Each biome has **spawn areas or spawn points** defined in configuration (e.g. regions, volumes, or a list of positions). Designer defines where items _can_ appear, not each item instance.
+- Items from that biome's configured set are **instantiated at random positions** within those areas (or at randomly chosen spawn points). The system uses designer-built models and places them according to config.
+- Items must spawn into their **corresponding biome only**.
+- Spawning must **not rely on hardcoded biome checks**; spawn areas and item selection are config-driven.
 
 System must support at least:
 
 - 8+ biomes
 - 100+ total collectible items
 
-Spawning must **not rely on hardcoded biome checks**.
-
 ---
 
 ## 6. Configuration and Designer-Built Assets
 
-Biome and item definitions must be **configurable** so that designer-built islands and treasures can be wired in without code changes.
+Biome and item definitions must be **configurable** so that designer-built islands and treasure models can be wired in without code changes. The system **instantiates** collectible instances at random within config-defined spawn areas; designers provide the models and the spawn geometry, not each placed instance.
 
-- **Configuration source**: Biome and item definitions (IDs, display names, which items belong to which biome, world model references, spawn or placement info) must come from a **configuration layer** (e.g. ModuleScripts, JSON, or Roblox instance attributes/folders) that can be updated without changing core game logic.
-- **Designer-owned assets**: Islands and treasure models are built by designers and placed in the world or in storage (e.g. ReplicatedStorage). The implementation must **consume** these assets via configuration (e.g. mapping biome ID → island instance or folder; item ID → model reference or in-world instance), not create or duplicate them.
-- **Binding**: The system must support a defined way to associate config (biome ID, item ID) with the actual instances (which island, which collectible model/placement). Examples: attributes on instances, naming conventions, or a config table that references instance paths/names. The exact mechanism can be chosen in implementation, but the requirement is that binding is driven by config/data, not hardcoded in logic.
+- **Configuration source**: Biome and item definitions (IDs, display names, which items belong to which biome, world model references, **spawn areas or spawn points per biome**) must come from a **configuration layer** (e.g. ModuleScripts, JSON, or Roblox instance attributes/folders) that can be updated without changing core game logic.
+- **Designer-owned assets**: Designers build **islands** (biome geometry) and **treasure models** (one per item type, e.g. in ReplicatedStorage). Designers define **spawn areas or spawn points** per biome in config (where items may appear). The implementation **instantiates** collectibles by cloning designer-built models and placing them at **random positions** within those spawn areas; it does not create the underlying assets, only instances from them.
+- **Binding**: Config associates biome ID with island/region and spawn data, and item ID with model reference. Runtime instances are created by the system from that config (random placement within the biome's spawn area). Binding and placement logic must be driven by config/data, not hardcoded.
 
 ---
 
@@ -231,6 +232,6 @@ Generate:
 - Client update handling
 - Validation logic
 - Persistence integration
-- Configuration format and binding strategy for biomes and items (so designer-built islands and treasures can be wired in without code changes)
+- Configuration format and binding strategy for biomes and items, including spawn areas/points per biome and random placement logic (designer-built models instantiated at random within config-defined areas)
 
 Do not include Phase 2 features.
