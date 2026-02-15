@@ -55,6 +55,8 @@ Each collectible item must have:
 - World model representation
 - Collectible state per player
 
+The world model representation for each item must be **configurable** (e.g. a reference to a designer-built model or to a specific instance in the world). The system must not generate or hardcode the model.
+
 #### Constraints:
 
 - An item belongs to exactly one biome.
@@ -118,7 +120,17 @@ Spawning must **not rely on hardcoded biome checks**.
 
 ---
 
-## 6. Validation & Security Requirements
+## 6. Configuration and Designer-Built Assets
+
+Biome and item definitions must be **configurable** so that designer-built islands and treasures can be wired in without code changes.
+
+- **Configuration source**: Biome and item definitions (IDs, display names, which items belong to which biome, world model references, spawn or placement info) must come from a **configuration layer** (e.g. ModuleScripts, JSON, or Roblox instance attributes/folders) that can be updated without changing core game logic.
+- **Designer-owned assets**: Islands and treasure models are built by designers and placed in the world or in storage (e.g. ReplicatedStorage). The implementation must **consume** these assets via configuration (e.g. mapping biome ID → island instance or folder; item ID → model reference or in-world instance), not create or duplicate them.
+- **Binding**: The system must support a defined way to associate config (biome ID, item ID) with the actual instances (which island, which collectible model/placement). Examples: attributes on instances, naming conventions, or a config table that references instance paths/names. The exact mechanism can be chosen in implementation, but the requirement is that binding is driven by config/data, not hardcoded in logic.
+
+---
+
+## 7. Validation & Security Requirements
 
 The server must validate:
 
@@ -137,7 +149,7 @@ All collection logic must execute on the **server**.
 
 ---
 
-## 7. UI Support Requirements
+## 8. UI Support Requirements
 
 The system must expose sufficient data to allow:
 
@@ -151,7 +163,7 @@ UI implementation may be minimal for V1, but backend support must exist.
 
 ---
 
-## 8. Performance Requirements
+## 9. Performance Requirements
 
 - No excessive remote event spam
 - No expensive loops per frame
@@ -160,7 +172,7 @@ UI implementation may be minimal for V1, but backend support must exist.
 
 ---
 
-## 9. Edge Cases
+## 10. Edge Cases
 
 Handle:
 
@@ -172,7 +184,7 @@ Handle:
 
 ---
 
-## 10. Explicit Non-Goals (Do Not Implement)
+## 11. Explicit Non-Goals (Do Not Implement)
 
 Do **NOT** implement:
 
@@ -187,7 +199,7 @@ Do **NOT** implement:
 
 ---
 
-## 11. Success Criteria
+## 12. Success Criteria
 
 The feature is complete when:
 
@@ -219,5 +231,6 @@ Generate:
 - Client update handling
 - Validation logic
 - Persistence integration
+- Configuration format and binding strategy for biomes and items (so designer-built islands and treasures can be wired in without code changes)
 
 Do not include Phase 2 features.
