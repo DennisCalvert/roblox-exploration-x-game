@@ -1,4 +1,4 @@
-# Phase 2
+# Backlog
 
 A) Gameplay depth (rarity, respawn, dynamic spawning)
 B) Player progression (biome completion rewards, achievements)
