@@ -29,6 +29,7 @@ export type ItemConfig = {
 	displayName: string,
 	biomeId: string,
 	modelPath: string, -- path in ReplicatedStorage, e.g. "Treasures/GoldCoin"
+	description: string?, -- optional; shown in Index detail view for collected items
 }
 
 export type CollectiblesConfig = {

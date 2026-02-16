@@ -47,6 +47,12 @@ local DISPLAY_NAME_OVERRIDES: { [string]: string } = {
 	-- island_1_treasure_5 = "Leaf",
 }
 
+-- Optional descriptions per item (item id -> text). Shown in Index detail view for collected items.
+local DESCRIPTION_OVERRIDES: { [string]: string } = {
+	-- island_1_treasure_1 = "A delicate flower found near the shore.",
+	-- island_1_treasure_2 = "A sturdy mushroom growing in the shade.",
+}
+
 -- Build items for one biome (count from ITEM_COUNT_BY_BIOME or DEFAULT_ITEMS_PER_BIOME)
 local function itemsForBiome(biomeId: string, displayPrefix: string): { ItemConfig }
 	local list: { ItemConfig } = {}
@@ -59,6 +65,7 @@ local function itemsForBiome(biomeId: string, displayPrefix: string): { ItemConf
 			displayName = DISPLAY_NAME_OVERRIDES[id] or defaultName,
 			biomeId = biomeId,
 			modelPath = "Treasures/" .. biomeId .. "_treasure_" .. i,
+			description = DESCRIPTION_OVERRIDES[id],
 		})
 	end
 	return list

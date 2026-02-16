@@ -6,5 +6,6 @@
 
 require(script.Controllers.CollectiblesController)
 require(script.UI.CollectiblesProgressUI)
+require(script.UI.IndexUI)
 
 return nil
