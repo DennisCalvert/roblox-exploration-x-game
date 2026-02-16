@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.luau": "luau"
+  },
+  "luau-lsp.platform.type": "Roblox",
+  "luau-lsp.plugin.enabled": true
+}
