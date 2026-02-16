@@ -48,35 +48,42 @@ local function randomInSpawnArea(area: SpawnArea): Vector3
 	return Vector3.zero
 end
 
-local function pickRandomSpawnArea(areas: { SpawnArea }): SpawnArea?
-	if #areas == 0 then
-		return nil
+-- Returns a new 1-based array {1..n} shuffled (Fisher-Yates).
+local function shuffleIndices(n: number): { number }
+	local indices: { number } = {}
+	for i = 1, n do
+		indices[i] = i
 	end
-	return areas[math.random(1, #areas)]
+	for i = n, 2, -1 do
+		local j = math.random(1, i)
+		indices[i], indices[j] = indices[j], indices[i]
+	end
+	return indices
 end
 
 local function computeItemPositions()
 	local cfg = Config.getConfig()
+	-- Pass 1: build itemsById and itemIdsByBiome (no positions)
 	for _, item in cfg.items do
-		local biome = nil
-		for _, b in cfg.biomes do
-			if b.id == item.biomeId then
-				biome = b
-				break
-			end
-		end
-		if not biome then
-			continue
-		end
-		local area = pickRandomSpawnArea(biome.spawnAreas)
-		if area then
-			itemPositions[item.id] = randomInSpawnArea(area)
-		end
 		itemsById[item.id] = item
 		if not itemIdsByBiome[item.biomeId] then
 			itemIdsByBiome[item.biomeId] = {}
 		end
 		table.insert(itemIdsByBiome[item.biomeId], item.id)
+	end
+	-- Pass 2: assign one item per spawn area per biome (cycle if more items than areas)
+	for _, biome in cfg.biomes do
+		local areas = biome.spawnAreas
+		local itemIds = biome.itemIds
+		if #areas == 0 or #itemIds == 0 then
+			continue
+		end
+		local shuffled = shuffleIndices(#areas)
+		for i, itemId in ipairs(itemIds) do
+			local areaIdx = shuffled[((i - 1) % #areas) + 1]
+			local area = areas[areaIdx]
+			itemPositions[itemId] = randomInSpawnArea(area)
+		end
 	end
 end
 
